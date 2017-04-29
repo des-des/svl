@@ -2,8 +2,15 @@ const { MERGE, ARRAY_TOGGLE, transform } = require('./lib/transform.js')
 const { eachKey, mapKeys } = require('./lib/helpers.js')
 const { tachyons } = require('./lib/css.js')
 
-const tag = name => style => innerHtml =>
-  `<${name} style="${style}">${innerHtml}</${name}>`
+const tag = (tag, props, innerHtml) => {
+  const propsStr = Object.keys(props)
+    .map(key => ({key, value: props[key]}))
+    .map(({ key, value}) => value ? `${key}="${value}"` : key)
+    .reduce((html, prop) => html + prop, '')
+    .trim()
+
+  return `<${tag} ${propsStr}>${innerHtml}</${tag}>`
+}
 
 const styleToggleSpec = key => ({
   op: MERGE,
@@ -18,6 +25,19 @@ const styleToggleSpec = key => ({
 const initComponent = engine => {
   const component = config => {
     console.log(config);
+    if (typeof config.style === 'string') {
+      config.style = config.style.split(' ')
+    }
+    if (!config.style) config.style = []
+
+    const internals = ['children', 'tag']
+    const props = Object.create(null)
+    eachKey(k => {
+      if (!internals.includes(k)) {
+        props[k] = config[k]
+      }
+    }, config)
+
     const styleTogglers = mapKeys(
       (key, value) => ({
         key,
@@ -26,7 +46,7 @@ const initComponent = engine => {
       engine.style
     )
 
-    const styleStr = config.style
+    props.style = props.style
       .reduce(
         (styleStr, className) => styleStr + engine.style[className],
         ''
@@ -34,10 +54,10 @@ const initComponent = engine => {
       .trim()
 
       const renderChildren = children =>
-        children.map(child => child.render ? child.render() : child)
+        children && children.map(child => child.render ? child.render() : child)
 
     const render = () =>
-      tag(config.tag)(styleStr)(renderChildren(config.children))
+      tag(config.tag, props, renderChildren(config.children))
 
     return { render, sty: styleTogglers }
   }
