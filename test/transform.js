@@ -84,7 +84,6 @@ test('transform ARRAY_TOGGLE', t => {
 })
 
 test('transform MERGE with nested ARRAY_TOGGLE', t => {
-
   t.deepEqual(
     transform(
       {

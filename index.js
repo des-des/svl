@@ -5,7 +5,7 @@ const { tachyons } = require('./lib/css.js')
 const tag = (tag, props, innerHtml) => {
   const propsStr = Object.keys(props)
     .map(key => ({key, value: props[key]}))
-    .map(({ key, value}) => value ? `${key}="${value}"` : key)
+    .map(({ key, value }) => value ? `${key}="${value}"` : key)
     .reduce((html, prop) => html + prop, '')
     .trim()
 
@@ -23,11 +23,11 @@ const styleToggleSpec = key => ({
 })
 
 const svl = engine => {
-  componentBuilder = tag => (...args) => {
+  const componentBuilder = tag => (...args) => {
     const config = Object.create(null)
     config.tag = tag
 
-    if (args.length === 1)  {
+    if (args.length === 1) {
       config.children = [args[0]]
       return component(config)
     }
@@ -39,7 +39,6 @@ const svl = engine => {
 
     return component(parseArgs(config, ...args))
   }
-
 
   const component = config => {
     if (typeof config.style === 'string') {
@@ -70,7 +69,7 @@ const svl = engine => {
       )
       .trim()
 
-      const renderChildren = children =>
+    const renderChildren = children =>
         children && children.map(child =>
           child.render ? child.render() : child).join('')
 
@@ -79,9 +78,6 @@ const svl = engine => {
     }
     return { render, sty: styleTogglers, isComponent: true }
   }
-
-  const styleToggler = (key, config) =>
-    component(transform(styleToggleSpec(key)), config)
 
   return { component, componentBuilder }
 }
