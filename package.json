@@ -1,0 +1,11 @@
+{
+  "name": "svl",
+  "version": "0.0.0",
+  "description": "simple view library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "des-des",
+  "license": "ISC"
+}
