@@ -22,9 +22,26 @@ const styleToggleSpec = key => ({
   }
 })
 
-const initComponent = engine => {
+const svl = engine => {
+  componentBuilder = tag => (...args) => {
+    const config = Object.create(null)
+    config.tag = tag
+
+    if (args.length === 1)  {
+      config.children = [args[0]]
+      return component(config)
+    }
+
+    if (typeof args[0] === 'string') {
+      config.style = args[0]
+      return component(parseArgs(config, ...args.slice(1)))
+    }
+
+    return component(parseArgs(config, ...args))
+  }
+
+
   const component = config => {
-    console.log(config);
     if (typeof config.style === 'string') {
       config.style = config.style.split(' ')
     }
@@ -54,20 +71,29 @@ const initComponent = engine => {
       .trim()
 
       const renderChildren = children =>
-        children && children.map(child => child.render ? child.render() : child)
+        children && children.map(child =>
+          child.render ? child.render() : child).join('')
 
-    const render = () =>
-      tag(config.tag, props, renderChildren(config.children))
-
-    return { render, sty: styleTogglers }
+    const render = () => {
+      return tag(config.tag, props, renderChildren(config.children))
+    }
+    return { render, sty: styleTogglers, isComponent: true }
   }
 
   const styleToggler = (key, config) =>
     component(transform(styleToggleSpec(key)), config)
 
-  return component
+  return { component, componentBuilder }
 }
 
-module.exports = {
-  svl: initComponent({ style: tachyons })
+const parseArgs = (result, first, ...args) => {
+  if (first === undefined) return result
+
+  if (typeof first === 'object' && !first.isComponent) {
+    return parseArgs(Object.assign(result, first), ...args)
+  }
+  result.children = [first, ...args]
+  return result
 }
+
+module.exports = svl({ style: tachyons })
