@@ -86,7 +86,7 @@ test('transform ARRAY_TOGGLE', t => {
 test('transform SET', t => {
   t.deepEqual(
     transform(
-      { op: SET, spec: { path: ['arr', 0 ], value: 'v' } },
+      { op: SET, spec: { path: ['arr', 0], value: 'v' } },
       { arr: [] }
     ),
     { arr: ['v'] },
@@ -94,7 +94,6 @@ test('transform SET', t => {
   )
   t.end()
 })
-
 
 test('transform MERGE with nested ARRAY_TOGGLE', t => {
   t.deepEqual(
