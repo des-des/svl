@@ -1,6 +1,6 @@
 const test = require('tape')
 
-const svl = require('../lib/component.js')
+const svl = require('../lib/svl.js')
 const { component } = svl({})
 
 test('component.getSpec', t => {
