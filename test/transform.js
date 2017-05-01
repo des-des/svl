@@ -1,6 +1,6 @@
 const test = require('tape')
 
-const { transform, MERGE, ARRAY_TOGGLE } = require('../lib/transform.js')
+const { transform, MERGE, ARRAY_TOGGLE, SET } = require('../lib/transform.js')
 
 test('transform', t => {
   t.deepEqual(
@@ -82,6 +82,19 @@ test('transform ARRAY_TOGGLE', t => {
 
   t.end()
 })
+
+test('transform SET', t => {
+  t.deepEqual(
+    transform(
+      { op: SET, spec: { path: ['arr', 0 ], value: 'v' } },
+      { arr: [] }
+    ),
+    { arr: ['v'] },
+    'can toggle away single element'
+  )
+  t.end()
+})
+
 
 test('transform MERGE with nested ARRAY_TOGGLE', t => {
   t.deepEqual(
