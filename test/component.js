@@ -1,7 +1,7 @@
 const test = require('tape')
 
-const svl = require('../lib/svl.js')
-const { component } = svl({})
+const { initComponent } = require('../lib/component.js')
+const component = initComponent({})
 
 test('component.getSpec', t => {
   const mockSpec = { some: 'data' }
